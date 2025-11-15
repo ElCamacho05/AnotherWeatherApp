@@ -7,10 +7,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-// Importa el R de tu paquete principal
-import proyects.camachopichal.apps.anotherweatherapp.R;
+// Importa la clase de View Binding generada
+import proyects.camachopichal.apps.anotherweatherapp.databinding.FragmentNotificationsBinding;
 
 public class NotificationsFragment extends Fragment {
+
+    private FragmentNotificationsBinding binding;
 
     public NotificationsFragment() {
         // Constructor público vacío requerido
@@ -19,12 +21,23 @@ public class NotificationsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // "Infla" (conecta) el layout XML con este archivo Java
-        View view = inflater.inflate(R.layout.fragment_notifications, container, false);
+        // 1. Inflar el layout usando el objeto Binding
+        binding = FragmentNotificationsBinding.inflate(inflater, container, false);
+
+        // 2. Obtener la vista raíz (root view)
+        View view = binding.getRoot();
 
         // Aquí puedes encontrar los elementos de esta pantalla (como el CalendarView)
-        // Ejemplo: CalendarView calendarView = view.findViewById(R.id.calendarView);
+        // Ejemplo: CalendarView calendarView = binding.calendarView;
+        // Solo si tu layout fragment_notifications.xml tiene un CalendarView con ID 'calendarView'.
 
         return view;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        // IMPORTANTE: Limpiar la referencia del binding para evitar fugas de memoria
+        binding = null;
     }
 }

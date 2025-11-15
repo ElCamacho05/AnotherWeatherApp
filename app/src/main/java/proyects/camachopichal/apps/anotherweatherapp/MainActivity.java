@@ -9,18 +9,21 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import androidx.annotation.NonNull;
 
-// Importa tus fragmentos
+// fragmentos de interfaz
 import proyects.camachopichal.apps.anotherweatherapp.fragments.HomeFragment;
 import proyects.camachopichal.apps.anotherweatherapp.fragments.NotificationsFragment;
 import proyects.camachopichal.apps.anotherweatherapp.fragments.ProfileFragment;
 
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
+
+// clase generada por viewbinding
+import proyects.camachopichal.apps.anotherweatherapp.databinding.ActivityMainBinding;
 
 
 public class MainActivity extends AppCompatActivity {
 
-    BottomNavigationView bottomNavigation;
+    // Declaración del objeto Binding
+    private ActivityMainBinding binding;
 
     // Crea instancias de tus tres fragmentos
     HomeFragment homeFragment = new HomeFragment();
@@ -30,16 +33,19 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
 
-        // Conecta la barra de navegación del layout
-        bottomNavigation = findViewById(R.id.bottom_navigation);
+        // 1. Inflar el layout y obtener la instancia de binding
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+
+        // 2. Establecer el root view como el contenido de la actividad
+        setContentView(binding.getRoot());
 
         // Carga el fragmento "Home" por defecto al abrir la app
         loadFragment(homeFragment);
 
         // Configura el listener para saber a qué ícono se le da clic
-        bottomNavigation.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
+        // Acceso directo a la vista con "binding.idDeLaVista"
+        binding.bottomNavigation.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 // Compara el ID del ítem seleccionado (definido en bottom_nav_menu.xml)

@@ -2,25 +2,30 @@ package proyects.camachopichal.apps.anotherweatherapp;
 
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
-import android.widget.Button;
 import android.view.View;
 import android.content.Intent;
 
+// Importa la clase de View Binding generada
+import proyects.camachopichal.apps.anotherweatherapp.databinding.ActivityRegisterBinding;
+
 public class RegisterActivity extends AppCompatActivity {
 
-    Button btnCrearCuenta;
+    // Declaración del objeto Binding
+    private ActivityRegisterBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // Asegúrate de tener el layout "activity_register.xml" en res/layout
-        setContentView(R.layout.activity_register);
 
-        // Botón en activity_register.xml se llama "btnCrearCuenta"
-        btnCrearCuenta = findViewById(R.id.btnCrearCuenta);
+        // 1. Inflar el layout y obtener la instancia de binding
+        binding = ActivityRegisterBinding.inflate(getLayoutInflater());
+
+        // 2. Establecer el root view como el contenido de la actividad
+        setContentView(binding.getRoot());
 
         // --- Lógica para crear cuenta y volver al Login ---
-        btnCrearCuenta.setOnClickListener(new View.OnClickListener() {
+        // Acceso directo a la vista con "binding.idDeLaVista"
+        binding.btnCrearCuenta.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // 1. Lógica para guardar los datos del usuario en la base de datos )

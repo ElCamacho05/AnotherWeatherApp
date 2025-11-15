@@ -6,16 +6,14 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView; // Importa TextView
 
-// Importa el R de tu paquete principal
-import proyects.camachopichal.apps.anotherweatherapp.R;
+// Importa la clase de View Binding generada
+import proyects.camachopichal.apps.anotherweatherapp.databinding.FragmentProfileBinding;
 
 public class ProfileFragment extends Fragment {
 
-    // Declaramos los TextViews para mostrar la info
-    TextView tvUserEmail;
-    TextView tvLocationsCount;
+    // Se usa un objeto nullable y privado para el binding
+    private FragmentProfileBinding binding;
 
     public ProfileFragment() {
         // Constructor público vacío requerido
@@ -24,18 +22,25 @@ public class ProfileFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // "Infla" (conecta) el layout XML con este archivo Java
-        View view = inflater.inflate(R.layout.fragment_profile, container, false);
+        // 1. Inflar el layout usando el objeto Binding
+        binding = FragmentProfileBinding.inflate(inflater, container, false);
 
-        // Conectamos las vistas
-        tvUserEmail = view.findViewById(R.id.tvUserEmail);
-        tvLocationsCount = view.findViewById(R.id.tvLocationsCount);
+        // 2. Obtener la vista raíz (root view)
+        View view = binding.getRoot();
 
         // Aquí pondrías la lógica para cargar los datos del usuario
         // (por ahora ponemos datos de ejemplo)
-        tvUserEmail.setText("usuario@ejemplo.com");
-        tvLocationsCount.setText("2");
+        // Acceso directo a la vista con "binding.idDeLaVista"
+        binding.tvUserEmail.setText("usuario@ejemplo.com");
+        binding.tvLocationsCount.setText("2");
 
         return view;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        // IMPORTANTE: Limpiar la referencia del binding para evitar fugas de memoria
+        binding = null;
     }
 }

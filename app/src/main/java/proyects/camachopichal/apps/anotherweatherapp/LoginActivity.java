@@ -2,27 +2,30 @@ package proyects.camachopichal.apps.anotherweatherapp;
 
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
-import android.widget.Button;
 import android.content.Intent;
 import android.view.View;
 
+// Importa la clase de View Binding generada
+import proyects.camachopichal.apps.anotherweatherapp.databinding.ActivityLoginBinding;
+
 public class LoginActivity extends AppCompatActivity {
 
-    // Declaramos los botones
-    Button btnContinuar;
-    Button btnIrARegistro;
+    // Declaración del objeto Binding
+    private ActivityLoginBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
 
-        // Conectamos los botones del layout con el código
-        btnIrARegistro = findViewById(R.id.btnIrARegistro);
-        btnContinuar = findViewById(R.id.btnContinuar);
+        // 1. Inflar el layout y obtener la instancia de binding
+        binding = ActivityLoginBinding.inflate(getLayoutInflater());
+
+        // 2. Establecer el root view como el contenido de la actividad
+        setContentView(binding.getRoot());
 
         // --- Lógica para ir a la pantalla de Registro ---
-        btnIrARegistro.setOnClickListener(new View.OnClickListener() {
+        // Acceso directo a la vista con "binding.idDeLaVista"
+        binding.btnIrARegistro.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // Creamos un "Intent" para iniciar la nueva actividad
@@ -32,7 +35,7 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         // Esto te mandará a la pantalla principal de la app
-        btnContinuar.setOnClickListener(new View.OnClickListener() {
+        binding.btnContinuar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // Lógica de validación de email/contraseña
