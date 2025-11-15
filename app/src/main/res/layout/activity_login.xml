@@ -15,7 +15,9 @@
         android:text="Another Weather App"
         android:textSize="24sp"
         android:textStyle="bold"
-        android:layout_marginTop="32dp"/>
+        android:layout_marginTop="32dp"
+        android:layout_marginBottom="16dp"
+        />
 
     <TextView
         android:layout_width="wrap_content"
@@ -59,7 +61,7 @@
     <Button
         android:id="@+id/btnGoogle"
         android:layout_width="match_parent"
-        android:layout_height="61dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:text="Continuar con Google"
         android:textColor="@android:color/black"
@@ -71,7 +73,7 @@
     <Button
         android:id="@+id/btnApple"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:text="Continuar con Apple"
         android:textColor="@android:color/black"
