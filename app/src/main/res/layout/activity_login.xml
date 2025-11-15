@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="24dp"
+    android:gravity="center_horizontal"
+    tools:context=".LoginActivity">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Another Weather App"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:layout_marginTop="32dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Tu clima personalizado por ubicacion"
+        android:textSize="16sp"
+        android:layout_marginBottom="32dp"/>
+
+    <Button
+        android:id="@+id/btnIrARegistro"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Crea una cuenta"
+        android:layout_marginBottom="8dp"
+        style="?android:attr/borderlessButtonStyle"
+        android:textAllCaps="false"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="?android:attr/textColorPrimary" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Ingresa tu correo electrónico para registrarte en esta aplicación"
+        android:layout_marginBottom="16dp"/>
+
+    <EditText
+        android:id="@+id/etEmailLogin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="correoelectrónico@dominio.com"
+        android:inputType="textEmailAddress"/>
+
+    <Button
+        android:id="@+id/btnContinuar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Continuar"
+        android:layout_marginTop="16dp"/>
+
+    <Button
+        android:id="@+id/btnGoogle"
+        android:layout_width="match_parent"
+        android:layout_height="61dp"
+        android:layout_marginTop="24dp"
+        android:text="Continuar con Google"
+        android:textColor="@android:color/black"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        app:iconGravity="textStart"
+        app:icon="@drawable/ic_google_logo"
+        app:iconTint="@null" />
+
+    <Button
+        android:id="@+id/btnApple"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginTop="8dp"
+        android:text="Continuar con Apple"
+        android:textColor="@android:color/black"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        app:iconGravity="textStart"
+        app:icon="@drawable/ic_apple_logo"
+        app:iconTint="@null" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Al hacer clic en continuar, aceptas nuestros Términos de servicio y Política de privacidad"
+        android:textSize="12sp"
+        android:layout_marginTop="32dp"
+        android:textAlignment="center"/>
+
+</LinearLayout>
