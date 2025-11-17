@@ -136,12 +136,14 @@
             android:layout_marginTop="24dp"/>
 
         <HorizontalScrollView
+            android:id="@+id/horizontalScrollView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toBottomOf="@id/tvForecastTitle"
             android:layout_marginTop="16dp">
 
             <LinearLayout
+                android:id="@+id/forecastContainer"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">

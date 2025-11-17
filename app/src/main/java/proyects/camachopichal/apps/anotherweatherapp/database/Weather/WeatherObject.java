@@ -1,10 +1,12 @@
 package proyects.camachopichal.apps.anotherweatherapp.database.Weather;
 
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Locale;
 
 /**
- * Clase de modelo para representar un punto de datos horario del pronóstico.
+ * Clase de modelo para representar un punto de datos de clima (hora o día).
  * Todas las temperaturas se almacenan en Kelvin (como vienen del API).
  */
 public class WeatherObject {
@@ -36,12 +38,51 @@ public class WeatherObject {
     private double windGust; // m/s
 
     // --- Campos opcionales (del objeto "rain") ---
-    // Usamos Double para poder representar la ausencia (null) si no hay lluvia.
     private Double rain1h; // Rain volume for the last 1 hour (mm)
 
 
-    // Constructor público vacío y métodos Getters/Setters (Omitidos para mantener la brevedad)
-    // ...
+    // Constructor público vacío y métodos Getters/Setters (Se mantienen completos)
+    // ... (Mantener todos los getters/setters del archivo anterior aquí) ...
+    public long getTimestamp() { return timestamp; }
+    public void setTimestamp(long timestamp) { this.timestamp = timestamp; }
+    public String getDateTimeTxt() { return dateTimeTxt; }
+    public void setDateTimeTxt(String dateTimeTxt) { this.dateTimeTxt = dateTimeTxt; }
+    public double getPop() { return pop; }
+    public void setPop(double pop) { this.pop = pop; }
+    public int getVisibility() { return visibility; }
+    public void setVisibility(int visibility) { this.visibility = visibility; }
+    public double getTempKelvin() { return tempKelvin; }
+    public void setTempKelvin(double tempKelvin) { this.tempKelvin = tempKelvin; }
+    public double getFeelsLikeKelvin() { return feelsLikeKelvin; }
+    public void setFeelsLikeKelvin(double feelsLikeKelvin) { this.feelsLikeKelvin = feelsLikeKelvin; }
+    public double getTempMinKelvin() { return tempMinKelvin; }
+    public void setTempMinKelvin(double tempMinKelvin) { this.tempMinKelvin = tempMinKelvin; }
+    public double getTempMaxKelvin() { return tempMaxKelvin; }
+    public void setTempMaxKelvin(double tempMaxKelvin) { this.tempMaxKelvin = tempMaxKelvin; }
+    public int getPressure() { return pressure; }
+    public void setPressure(int pressure) { this.pressure = pressure; }
+    public int getHumidity() { return humidity; }
+    public void setHumidity(int humidity) { this.humidity = humidity; }
+    public int getSeaLevel() { return seaLevel; }
+    public void setSeaLevel(int seaLevel) { this.seaLevel = seaLevel; }
+    public int getWeatherId() { return weatherId; }
+    public void setWeatherId(int weatherId) { this.weatherId = weatherId; }
+    public String getWeatherMain() { return weatherMain; }
+    public void setWeatherMain(String weatherMain) { this.weatherMain = weatherMain; }
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
+    public String getIconCode() { return iconCode; }
+    public void setIconCode(String iconCode) { this.iconCode = iconCode; }
+    public double getWindSpeed() { return windSpeed; }
+    public void setWindSpeed(double windSpeed) { this.windSpeed = windSpeed; }
+    public int getWindDeg() { return windDeg; }
+    public void setWindDeg(int windDeg) { this.windDeg = windDeg; }
+    public double getWindGust() { return windGust; }
+    public void setWindGust(double windGust) { this.windGust = windGust; }
+    public Double getRain1h() { return rain1h; }
+    public void setRain1h(Double rain1h) { this.rain1h = rain1h; }
+
+
 
     // --- MÉTODOS DE CONVENIENCIA PARA LA UI ---
 
@@ -85,6 +126,22 @@ public class WeatherObject {
     }
 
     /**
+     * Devuelve el día de la semana (ej: LUN, MAR, MIÉ) a partir del timestamp.
+     */
+    public String getDayOfWeek() {
+        try {
+            // Convierte el timestamp UNIX a milisegundos
+            Date date = new Date(this.timestamp * 1000L);
+            // Formato de día de la semana corto
+            SimpleDateFormat sdf = new SimpleDateFormat("EEE", new Locale("es", "ES"));
+            return sdf.format(date).toUpperCase(Locale.ROOT).substring(0, 3); // Obtiene las primeras 3 letras
+        } catch (Exception e) {
+            return "---";
+        }
+    }
+
+
+    /**
      * Devuelve la probabilidad de lluvia en formato de porcentaje legible.
      */
     public String getPopPercentage() {
@@ -101,154 +158,5 @@ public class WeatherObject {
             return df.format(rain1h) + " mm";
         }
         return "0 mm";
-    }
-
-    // --- Getters y Setters para todos los campos (Necesarios para el parseo y acceso) ---
-
-    public long getTimestamp() { return timestamp; }
-    public void setTimestamp(long timestamp) { this.timestamp = timestamp; }
-
-    public String getDateTimeTxt() {
-        return dateTimeTxt;
-    }
-
-    public void setDateTimeTxt(String dateTimeTxt) {
-        this.dateTimeTxt = dateTimeTxt;
-    }
-
-    public double getPop() {
-        return pop;
-    }
-
-    public void setPop(double pop) {
-        this.pop = pop;
-    }
-
-    public int getVisibility() {
-        return visibility;
-    }
-
-    public void setVisibility(int visibility) {
-        this.visibility = visibility;
-    }
-
-    public double getTempKelvin() {
-        return tempKelvin;
-    }
-
-    public void setTempKelvin(double tempKelvin) {
-        this.tempKelvin = tempKelvin;
-    }
-
-    public double getFeelsLikeKelvin() {
-        return feelsLikeKelvin;
-    }
-
-    public void setFeelsLikeKelvin(double feelsLikeKelvin) {
-        this.feelsLikeKelvin = feelsLikeKelvin;
-    }
-
-    public double getTempMinKelvin() {
-        return tempMinKelvin;
-    }
-
-    public void setTempMinKelvin(double tempMinKelvin) {
-        this.tempMinKelvin = tempMinKelvin;
-    }
-
-    public double getTempMaxKelvin() {
-        return tempMaxKelvin;
-    }
-
-    public void setTempMaxKelvin(double tempMaxKelvin) {
-        this.tempMaxKelvin = tempMaxKelvin;
-    }
-
-    public int getPressure() {
-        return pressure;
-    }
-
-    public void setPressure(int pressure) {
-        this.pressure = pressure;
-    }
-
-    public int getHumidity() {
-        return humidity;
-    }
-
-    public void setHumidity(int humidity) {
-        this.humidity = humidity;
-    }
-
-    public int getSeaLevel() {
-        return seaLevel;
-    }
-
-    public void setSeaLevel(int seaLevel) {
-        this.seaLevel = seaLevel;
-    }
-
-    public int getWeatherId() {
-        return weatherId;
-    }
-
-    public void setWeatherId(int weatherId) {
-        this.weatherId = weatherId;
-    }
-
-    public String getWeatherMain() {
-        return weatherMain;
-    }
-
-    public void setWeatherMain(String weatherMain) {
-        this.weatherMain = weatherMain;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getIconCode() {
-        return iconCode;
-    }
-
-    public void setIconCode(String iconCode) {
-        this.iconCode = iconCode;
-    }
-
-    public double getWindSpeed() {
-        return windSpeed;
-    }
-
-    public void setWindSpeed(double windSpeed) {
-        this.windSpeed = windSpeed;
-    }
-
-    public int getWindDeg() {
-        return windDeg;
-    }
-
-    public void setWindDeg(int windDeg) {
-        this.windDeg = windDeg;
-    }
-
-    public double getWindGust() {
-        return windGust;
-    }
-
-    public void setWindGust(double windGust) {
-        this.windGust = windGust;
-    }
-
-    public Double getRain1h() {
-        return rain1h;
-    }
-
-    public void setRain1h(Double rain1h) {
-        this.rain1h = rain1h;
     }
 }
