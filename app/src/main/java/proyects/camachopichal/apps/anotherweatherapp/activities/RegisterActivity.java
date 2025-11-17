@@ -1,9 +1,8 @@
-package proyects.camachopichal.apps.anotherweatherapp;
+package proyects.camachopichal.apps.anotherweatherapp.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.content.Intent;
 
 // Importa la clase de View Binding generada
 import proyects.camachopichal.apps.anotherweatherapp.databinding.ActivityRegisterBinding;

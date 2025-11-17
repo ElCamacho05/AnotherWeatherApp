@@ -1,4 +1,4 @@
-package proyects.camachopichal.apps.anotherweatherapp.fragments;
+package proyects.camachopichal.apps.anotherweatherapp.activities.fragments;
 
 
 import android.os.Bundle;
@@ -8,13 +8,14 @@ import android.view.View;
 import android.view.ViewGroup;
 
 // Importa la clase de View Binding generada
-import proyects.camachopichal.apps.anotherweatherapp.databinding.FragmentNotificationsBinding;
+import proyects.camachopichal.apps.anotherweatherapp.databinding.FragmentProfileBinding;
 
-public class NotificationsFragment extends Fragment {
+public class ProfileFragment extends Fragment {
 
-    private FragmentNotificationsBinding binding;
+    // Se usa un objeto nullable y privado para el binding
+    private FragmentProfileBinding binding;
 
-    public NotificationsFragment() {
+    public ProfileFragment() {
         // Constructor público vacío requerido
     }
 
@@ -22,14 +23,16 @@ public class NotificationsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // 1. Inflar el layout usando el objeto Binding
-        binding = FragmentNotificationsBinding.inflate(inflater, container, false);
+        binding = FragmentProfileBinding.inflate(inflater, container, false);
 
         // 2. Obtener la vista raíz (root view)
         View view = binding.getRoot();
 
-        // Aquí puedes encontrar los elementos de esta pantalla (como el CalendarView)
-        // Ejemplo: CalendarView calendarView = binding.calendarView;
-        // Solo si tu layout fragment_notifications.xml tiene un CalendarView con ID 'calendarView'.
+        // Aquí pondrías la lógica para cargar los datos del usuario
+        // (por ahora ponemos datos de ejemplo)
+        // Acceso directo a la vista con "binding.idDeLaVista"
+        binding.tvUserEmail.setText("usuario@ejemplo.com");
+        binding.tvLocationsCount.setText("2");
 
         return view;
     }

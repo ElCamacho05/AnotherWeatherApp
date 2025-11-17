@@ -1,4 +1,4 @@
-package proyects.camachopichal.apps.anotherweatherapp.fragments;
+package proyects.camachopichal.apps.anotherweatherapp.activities.fragments;
 
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;

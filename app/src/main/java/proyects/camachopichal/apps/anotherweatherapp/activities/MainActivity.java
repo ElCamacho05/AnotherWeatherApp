@@ -1,4 +1,4 @@
-package proyects.camachopichal.apps.anotherweatherapp;
+package proyects.camachopichal.apps.anotherweatherapp.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
@@ -10,9 +10,10 @@ import android.view.MenuItem;
 import androidx.annotation.NonNull;
 
 // fragmentos de interfaz
-import proyects.camachopichal.apps.anotherweatherapp.fragments.HomeFragment;
-import proyects.camachopichal.apps.anotherweatherapp.fragments.NotificationsFragment;
-import proyects.camachopichal.apps.anotherweatherapp.fragments.ProfileFragment;
+import proyects.camachopichal.apps.anotherweatherapp.R;
+import proyects.camachopichal.apps.anotherweatherapp.activities.fragments.HomeFragment;
+import proyects.camachopichal.apps.anotherweatherapp.activities.fragments.NotificationsFragment;
+import proyects.camachopichal.apps.anotherweatherapp.activities.fragments.ProfileFragment;
 
 import com.google.android.material.navigation.NavigationBarView;
 

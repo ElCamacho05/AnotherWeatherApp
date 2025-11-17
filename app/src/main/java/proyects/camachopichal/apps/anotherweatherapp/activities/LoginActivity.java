@@ -1,4 +1,4 @@
-package proyects.camachopichal.apps.anotherweatherapp;
+package proyects.camachopichal.apps.anotherweatherapp.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
