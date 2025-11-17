@@ -28,16 +28,17 @@
             android:text="Buscar"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@id/etSearchLocation"
-            app:layout_constraintBottom_toBottomOf="@id/etSearchLocation" /> <Button
-        android:id="@+id/btnGetLocation"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="Obtener mi ubicacion"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/btnCaptureWeather"
-        app:layout_constraintTop_toBottomOf="@id/etSearchLocation"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"/>
+            app:layout_constraintBottom_toBottomOf="@id/etSearchLocation" />
+        <Button
+            android:id="@+id/btnGetLocation"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Obtener mi ubicacion"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/btnCaptureWeather"
+            app:layout_constraintTop_toBottomOf="@id/etSearchLocation"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"/>
 
         <Button
             android:id="@+id/btnCaptureWeather"
@@ -75,7 +76,7 @@
                     android:id="@+id/tvTime"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="16:47"
+                    android:text="06:00"
                     android:textColor="@android:color/white"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"/>
@@ -84,7 +85,7 @@
                     android:id="@+id/tvTemp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="24°C"
+                    android:text="9°C"
                     android:textSize="48sp"
                     android:textColor="@android:color/white"
                     android:textStyle="bold"
@@ -93,20 +94,19 @@
                     android:layout_marginTop="8dp"/>
 
                 <ImageView
-                    android:id="@+id/ivWeatherIcon"
+                    android:id="@+id/ivWeatherIconActual"
                     android:layout_width="60dp"
                     android:layout_height="60dp"
                     android:src="@drawable/ic_cloud"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@id/tvTemp"
-                    app:layout_constraintBottom_toBottomOf="@id/tvTemp"
-                    app:tint="@android:color/white" />
+                    app:layout_constraintBottom_toBottomOf="@id/tvTemp"/>
 
                 <TextView
                     android:id="@+id/tvWeatherDescription"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Parcialmente nublado"
+                    android:text="overcast clouds"
                     android:textColor="@android:color/white"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/tvTemp"/>
@@ -115,7 +115,7 @@
                     android:id="@+id/tvFeelsLike"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Sensacion termica de: 26°C"
+                    android:text="Sensacion termica de: 8°C"
                     android:textColor="@android:color/white"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/tvWeatherDescription"
@@ -157,11 +157,14 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Lun"/>
+
                     <ImageView
+                        android:id="@+id/ivWeatherIconForecast"
                         android:layout_width="40dp"
                         android:layout_height="40dp"
                         android:src="@drawable/ic_weather_placeholder"
                         android:layout_marginVertical="8dp"/>
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

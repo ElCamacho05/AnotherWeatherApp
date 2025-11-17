@@ -32,12 +32,22 @@ android {
     buildFeatures {
         viewBinding = true
     }
+    buildToolsVersion = "36.0.0"
 }
 
 dependencies {
-
+    // Core dependencies
     implementation(libs.appcompat)
     implementation(libs.material)
+
+    // Servicio de geolocalizacion
+    implementation(libs.play.services.location)
+
+    // Implementación principal de Glide, para cargar las imagenes en la interfaz
+    implementation(libs.glide)
+    annotationProcessor(libs.compiler)
+
+    // Test dependencies
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
