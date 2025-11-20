@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "145871016732",
+    "project_id": "another-weather-app-f4283",
+    "storage_bucket": "another-weather-app-f4283.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:145871016732:android:1a3ef8cb9109517299a0d9",
+        "android_client_info": {
+          "package_name": "proyects.camachopichal.apps.anotherweatherapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCrTwA8cI_qRBPECU8Vkra5BWVa3xBn5yM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
