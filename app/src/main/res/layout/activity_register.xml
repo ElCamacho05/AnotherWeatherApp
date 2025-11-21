@@ -94,12 +94,21 @@
             android:hint="Calle"/>
 
         <EditText
+            android:id="@+id/etCodigoPostal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Código Postal (CP)"
+            android:inputType="number"
+            android:maxLength="5"
+            android:layout_marginBottom="16dp"/>
+
+        <EditText
             android:id="@+id/etNumero"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Numero"
             android:inputType="textPostalAddress"
-            android:layout_marginBottom="16dp"/>
+            android:layout_marginBottom="8dp"/>
 
         <TextView
             android:layout_width="wrap_content"

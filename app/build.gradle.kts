@@ -48,6 +48,8 @@ dependencies {
 
     // Implementación principal de Glide, para cargar las imagenes en la interfaz
     implementation(libs.glide)
+    implementation(libs.firebase.auth)
+    implementation(libs.firebase.firestore)
     annotationProcessor(libs.compiler)
 
     // Test dependencies
