@@ -48,19 +48,19 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //OBTENER LOS DATOS DEL VIEW
-                String nombre=binding.etNombre.getText().toString();
-                String apPaterno=binding.etApellidoPaterno.getText().toString();
-                String apMaterno=binding.etApellidoMaterno.getText().toString();
-                String email=binding.etEmail.getText().toString();
+                String Nombre=binding.etNombre.getText().toString();
+                String ApPaterno=binding.etApellidoPaterno.getText().toString();
+                String ApMaterno=binding.etApellidoMaterno.getText().toString();
+                String Email=binding.etEmail.getText().toString();
                 String password=binding.etPassword.getText().toString();
-                String telefono=binding.etTelefono.getText().toString();
+                String Telefono=binding.etTelefono.getText().toString();
 
-                String cp=binding.etCodigoPostal.getText().toString();
-                String calle = binding.etCalle.getText().toString();
-                String numero = binding.etNumero.getText().toString();
+                String CP=binding.etCodigoPostal.getText().toString();
+                String Calle = binding.etCalle.getText().toString();
+                String Numero = binding.etNumero.getText().toString();
 
                 //VALIDACIONES
-                if(email.isEmpty() || password.isEmpty() || nombre.isEmpty() || apPaterno.isEmpty() || apMaterno.isEmpty()){
+                if(Email.isEmpty() || password.isEmpty() || Nombre.isEmpty() || ApPaterno.isEmpty() || ApMaterno.isEmpty()){
                     Toast.makeText(RegisterActivity.this,"Ingresa todos los datos",Toast.LENGTH_SHORT).show();
                     return;
                 }
@@ -70,21 +70,21 @@ public class RegisterActivity extends AppCompatActivity {
                     return;
                 }
 
-                RegistrarUsuario(email, password, nombre, apPaterno, apMaterno, telefono, calle, numero, cp);
+                RegistrarUsuario(Email, password, Nombre, ApPaterno, ApMaterno, Telefono, Calle, Numero, CP);
 
             }
         });
     }
 
-    private void RegistrarUsuario(String email, String password, String nombre,String apPaterno, String apMaterno, String telefono, String calle, String numero,String cp){
-        mAuth.createUserWithEmailAndPassword(email,password)
+    private void RegistrarUsuario(String Email, String password, String Nombre,String ApPaterno, String ApMaterno, String Telefono, String Calle, String Numero,String CP){
+        mAuth.createUserWithEmailAndPassword(Email,password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()){
                             String uid = mAuth.getCurrentUser().getUid();
                             // --- PASO 2: GUARDAR PERFIL EN FIRESTORE (DATOS) ---
-                            guardarPerfilEnFirestore(uid, email, nombre, apPaterno, apMaterno, telefono, calle, numero, cp);
+                            guardarPerfilEnFirestore(uid, Email, Nombre, ApPaterno, ApMaterno, Telefono, Calle, Numero, CP);
                         }else {
                             Log.w("AUTH", "Fallo al crear usuario.", task.getException());
                             Toast.makeText(RegisterActivity.this, "Fallo en registro: " + task.getException().getMessage(),
@@ -94,34 +94,33 @@ public class RegisterActivity extends AppCompatActivity {
                 });
     }
 
-    private void guardarPerfilEnFirestore(String uid, String email, String nombre, String apPaterno, String apMaterno, String telefono, String calle, String numero, String cp) {
+    private void guardarPerfilEnFirestore(String uid, String Email, String Nombre, String ApPaterno, String ApMaterno, String Telefono, String Calle, String Numero, String CP) {
 
         // --- 1. Crear el MAPA ANIDADO para el Nombre Completo ---
-        Map<String, Object> nombreCompletoMap = new HashMap<>();
-        nombreCompletoMap.put("nombre", nombre);
-        nombreCompletoMap.put("apellido_paterno", apPaterno);
-        nombreCompletoMap.put("apellido_materno", apMaterno);
+        Map<String, Object> Nombre_Completo = new HashMap<>();
+        Nombre_Completo.put("nombre", Nombre);
+        Nombre_Completo.put("apellido_paterno", ApPaterno);
+        Nombre_Completo.put("apellido_materno", ApMaterno);
 
         // --- 2. Crear el MAPA ANIDADO para la Dirección ---
-        Map<String, Object> direccionMap = new HashMap<>();
-        direccionMap.put("calle", calle);
-        direccionMap.put("numero", numero);
-        // --- INCLUSIÓN DEL NUEVO CAMPO ---
-        direccionMap.put("codigo_postal", cp);
+        Map<String, Object> Direccion = new HashMap<>();
+        Direccion.put("calle", Calle);
+        Direccion.put("numero", Numero);
+        Direccion.put("codigo_postal", CP);
 
         // --- 3. Crear el MAPA PRINCIPAL para el Documento ---
         Map<String, Object> usuario = new HashMap<>();
         usuario.put("uid", uid);
-        usuario.put("email", email);
-        usuario.put("telefono", telefono);
+        usuario.put("email", Email);
+        usuario.put("telefono", Telefono);
         usuario.put("fecha_registro", new Date());
 
         // AÑADIMOS LOS MAPAS ANIDADOS
-        usuario.put("nombre_completo", nombreCompletoMap);
-        usuario.put("direccion", direccionMap);
+        usuario.put("nombre_completo", Nombre_Completo);
+        usuario.put("direccion", Direccion);
 
         // --- Guardar en Firestore ---
-        db.collection("usuarios").document(uid)
+        db.collection("Usuario").document(uid)
                 .set(usuario)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override

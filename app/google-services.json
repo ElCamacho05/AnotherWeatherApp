@@ -1,26 +1,44 @@
 {
   "project_info": {
-    "project_number": "145871016732",
-    "project_id": "another-weather-app-f4283",
-    "storage_bucket": "another-weather-app-f4283.firebasestorage.app"
+    "project_number": "1016181053420",
+    "project_id": "another-weather-app-7b79c",
+    "storage_bucket": "another-weather-app-7b79c.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:145871016732:android:1a3ef8cb9109517299a0d9",
+        "mobilesdk_app_id": "1:1016181053420:android:db62dff0358ec54ecb92c9",
         "android_client_info": {
           "package_name": "proyects.camachopichal.apps.anotherweatherapp"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "1016181053420-nngvp5c9tjl503003m3jvlhh59q1rasl.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "proyects.camachopichal.apps.anotherweatherapp",
+            "certificate_hash": "d664baefdfaa254acbc506323511b6fc1ce2846c"
+          }
+        },
+        {
+          "client_id": "1016181053420-knbu442opdeq6pau8gel5l9jk4ei4mrn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
-          "current_key": "AIzaSyCrTwA8cI_qRBPECU8Vkra5BWVa3xBn5yM"
+          "current_key": "AIzaSyB8Plk4BSRZ47roWwCOWaOUaq1_pnlS9_o"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1016181053420-knbu442opdeq6pau8gel5l9jk4ei4mrn.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }
