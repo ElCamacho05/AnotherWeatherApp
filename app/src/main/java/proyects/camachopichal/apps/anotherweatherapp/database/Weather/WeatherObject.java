@@ -1,3 +1,7 @@
+/**
+ * POR FAVOR, NO CAMBIAR LA DOCUMENTACION/COMENTARIOS DE ESTE ARCHIVO, A MENOS QUE SEA PARA AGREGAR COSAS.
+ * */
+
 package proyects.camachopichal.apps.anotherweatherapp.database.Weather;
 
 import java.text.DecimalFormat;
