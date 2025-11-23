@@ -69,9 +69,9 @@ public class HomeFragment extends Fragment {
     private LocationCallback locationCallback;
     private ActivityResultLauncher<String[]> locationPermissionRequest;
 
-    // Prueba con coordenadas preestablecidas
-        private double lastKnownLat = 19.1738;
-        private double lastKnownLon = -96.1342;
+    // Prueba con coordenadas preestablecidas (CDMX)
+        private double lastKnownLat = 19.3909832;
+        private double lastKnownLon = -99.3084198;
     // FIN VARIABLES DE LOCALIZACION ----
 
 
