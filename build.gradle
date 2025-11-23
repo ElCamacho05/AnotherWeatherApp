@@ -1,11 +1,7 @@
-// Archivo de configuración de nivel superior (Raíz)
-
 buildscript {
     ext {
-        // Define la versión de Android Gradle Plugin (AGP) de forma centralizada
-        // Usamos la versión estable 8.2.2 para evitar problemas con 8.13.1
-        // Si 8.13.1 funcionaba para ti, puedes volver a intentar esa versión
-        android_gradle_plugin_version = "8.2.2"
+        // se puede alternar entre 8.2.2 y 8.13.1 si alguna no funciona
+        android_gradle_plugin_version = "8.13.1"
         google_services_version = "4.4.0"
     }
     repositories {
@@ -13,9 +9,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        // Plugin de Android para aplicaciones
         classpath "com.android.tools.build:gradle:$android_gradle_plugin_version"
-        // Plugin de Google Services
         classpath "com.google.gms:google-services:$google_services_version"
     }
 }

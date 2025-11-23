@@ -1,6 +1,5 @@
 plugins {
     id 'com.android.application'
-    // Aplicamos el plugin de Google Services aquí
     id 'com.google.gms.google-services'
 }
 
@@ -32,26 +31,25 @@ android {
     buildFeatures {
         viewBinding = true
     }
-    // No se necesita buildToolsVersion="36.0.0" si compileSdk es 36
 }
 
 dependencies {
-    // --- FIREBASE BOM (para gestionar versiones de Firebase) ---
-    implementation(platform('com.google.firebase:firebase-bom:34.6.0'))
+
 
     // Core AndroidX
     implementation 'androidx.appcompat:appcompat:1.7.1'
     implementation 'com.google.android.material:material:1.13.0'
 
-    // Firebase (Core y Servicios usados)
+    // Firebase
+    implementation(platform('com.google.firebase:firebase-bom:34.6.0'))
     implementation 'com.google.firebase:firebase-analytics'
-    implementation 'com.google.firebase:firebase-auth:23.0.0' // Versión actualizada a la que ya usas
-    implementation 'com.google.firebase:firebase-firestore:25.0.0' // Versión actualizada a la que ya usas
+    implementation 'com.google.firebase:firebase-auth:23.0.0'
+    implementation 'com.google.firebase:firebase-firestore:25.0.0'
 
-    // Servicios de Google (Geolocalización)
-    implementation 'com.google.android.gms:play-services-location:21.3.0'
+    // Servicios de Google
+    implementation 'com.google.android.gms:play-services-location:21.3.0' // GPS
 
-    // Glide (Imágenes)
+    // Glide (imagenes)
     implementation 'com.github.bumptech.glide:glide:4.16.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.16.0'
 
@@ -59,4 +57,6 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
+
+    implementation 'androidx.annotation:annotation:1.8.0'
 }

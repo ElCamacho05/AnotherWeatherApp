@@ -4,6 +4,7 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.TimeZone;
 
 /**
  * Clase de modelo para representar un punto de datos de clima (hora o día).
@@ -11,13 +12,13 @@ import java.util.Locale;
  */
 public class WeatherObject {
 
-    // --- Campo del nivel superior ---
-    private long timestamp; // dt
-    private String dateTimeTxt; // dt_txt (ej: "2025-11-17 06:00:00")
-    private double pop; // Probability of precipitation
+    // Campo del nivel superior (del objeto JSON)
+    private long timestamp; // dt: UNIX timestamp en segundos
+    private String dateTimeTxt; // dt_txt: se ignora para cálculos de hora local (para evitar cambios de hora por desface horario)
+    private double pop; // pop: Probability of precipitation
     private int visibility; // Visibility in meters
 
-    // --- Campos anidados (del objeto "main") ---
+    // Campos anidados (del objeto "main")
     private double tempKelvin;
     private double feelsLikeKelvin;
     private double tempMinKelvin;
@@ -26,23 +27,22 @@ public class WeatherObject {
     private int humidity; // %
     private int seaLevel; // hPa
 
-    // --- Campos anidados (del primer objeto en array "weather") ---
-    private int weatherId; // id (ej: 804)
-    private String weatherMain; // main (ej: "Clouds")
-    private String description; // description (ej: "overcast clouds")
-    private String iconCode; // icon (ej: "04n")
+    // Campos anidados (del primer objeto en array "weather")
+    private int weatherId; // id: ej: 804
+    private String weatherMain; // main: ej: "Clouds")
+    private String description; // description: ej: "overcast clouds"
+    private String iconCode; // icon: ej: "04n"
 
-    // --- Campos anidados (del objeto "wind") ---
+    // Campos anidados (del objeto "wind")
     private double windSpeed; // m/s
     private int windDeg; // degrees
     private double windGust; // m/s
 
-    // --- Campos opcionales (del objeto "rain") ---
+    // Campos opcionales (del objeto "rain")
     private Double rain1h; // Rain volume for the last 1 hour (mm)
 
 
-    // Constructor público vacío y métodos Getters/Setters (Se mantienen completos)
-    // ... (Mantener todos los getters/setters del archivo anterior aquí) ...
+    // Getters y Setters
     public long getTimestamp() { return timestamp; }
     public void setTimestamp(long timestamp) { this.timestamp = timestamp; }
     public String getDateTimeTxt() { return dateTimeTxt; }
@@ -84,77 +84,73 @@ public class WeatherObject {
 
 
 
-    // --- MÉTODOS DE CONVENIENCIA PARA LA UI ---
+    // Metodos de conveniencia para uso en la interfaz
 
     /**
      * Convierte la temperatura principal de Kelvin a Celsius y redondea.
-     * T(°C) = T(K) - 273.15
      */
     public int getTempCelsius() {
         return (int) Math.round(this.tempKelvin - 273.15);
     }
 
-    /**
-     * Convierte la sensación térmica de Kelvin a Celsius y redondea.
-     */
     public int getFeelsLikeCelsius() {
         return (int) Math.round(this.feelsLikeKelvin - 273.15);
     }
 
-    /**
-     * Convierte la temperatura mínima de Kelvin a Celsius y redondea.
-     */
     public int getTempMinCelsius() {
         return (int) Math.round(this.tempMinKelvin - 273.15);
     }
 
-    /**
-     * Convierte la temperatura máxima de Kelvin a Celsius y redondea.
-     */
     public int getTempMaxCelsius() {
         return (int) Math.round(this.tempMaxKelvin - 273.15);
     }
 
     /**
-     * Extrae solo la hora y minutos del string dt_txt.
+     * Obtiene la hora basada en el Timestamp y la zona horaria del dispositivo
      */
     public String getHourMinuteString() {
-        if (dateTimeTxt != null && dateTimeTxt.length() >= 16) {
-            return dateTimeTxt.substring(11, 16); // "HH:MM"
+        try {
+            Date date = new Date(this.timestamp * 1000L);
+            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.getDefault());
+            sdf.setTimeZone(TimeZone.getDefault());
+            return sdf.format(date);
+        } catch (Exception e) {
+            return "--:--";
         }
-        return "--:--";
     }
 
     /**
-     * Devuelve el día de la semana (ej: LUN, MAR, MIÉ) a partir del timestamp.
+     * Devuelve el día de la semana (LUN, MAR...) usando TimeZone local
      */
     public String getDayOfWeek() {
         try {
-            // Convierte el timestamp UNIX a milisegundos
+            // Convierte el timestamp a milisegundos
             Date date = new Date(this.timestamp * 1000L);
-            // Formato de día de la semana corto
+            // Formato de dia de la semana corto
             SimpleDateFormat sdf = new SimpleDateFormat("EEE", new Locale("es", "ES"));
-            return sdf.format(date).toUpperCase(Locale.ROOT).substring(0, 3); // Obtiene las primeras 3 letras
+            sdf.setTimeZone(TimeZone.getDefault()); // Uso de la hora local
+
+            String day = sdf.format(date).toUpperCase(Locale.ROOT);
+
+            // Asegura que no haya puntos en la string
+            day = day.replace(".", "");
+            if (day.length() > 3) {
+                return day.substring(0, 3);
+            }
+            return day;
         } catch (Exception e) {
             return "---";
         }
     }
 
-
-    /**
-     * Devuelve la probabilidad de lluvia en formato de porcentaje legible.
-     */
     public String getPopPercentage() {
-        // pop viene como un valor de 0 a 1
+        // Probability of Precipitation Percentage
         return (int) (pop * 100) + "%";
     }
 
-    /**
-     * Devuelve el volumen de lluvia para la última hora o un string predeterminado si no hay datos.
-     */
     public String getRainVolumeString() {
         if (rain1h != null && rain1h > 0) {
-            DecimalFormat df = new DecimalFormat("#.##"); // Formato para dos decimales
+            DecimalFormat df = new DecimalFormat("#.##");
             return df.format(rain1h) + " mm";
         }
         return "0 mm";
