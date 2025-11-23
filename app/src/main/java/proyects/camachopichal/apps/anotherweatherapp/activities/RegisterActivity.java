@@ -9,7 +9,6 @@ import android.util.Log;
 
 // Importa la clase de View Binding generada
 import proyects.camachopichal.apps.anotherweatherapp.databinding.ActivityRegisterBinding;
-import proyects.camachopichal.apps.anotherweatherapp.R;
 
 // --- Importaciones de Firebase ---
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -136,5 +135,5 @@ public class RegisterActivity extends AppCompatActivity {
                     }
                 });
     }
-    
+
 }
