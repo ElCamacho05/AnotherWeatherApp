@@ -25,7 +25,7 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 /**
- *
+ * Actividad para mostrar la interfaz de pronostico de clima por hora
  * */
 public class HourlyForecastActivity extends AppCompatActivity {
 
@@ -180,8 +180,8 @@ public class HourlyForecastActivity extends AppCompatActivity {
             }
             holder.binding.tvDescription.setText(description);
 
-            String details = String.format(Locale.getDefault(), "Viento: %.1f m/s | Lluvia: %s",
-                    item.getWindSpeed(), item.getPopPercentage());
+            String details = String.format(Locale.getDefault(), "Viento: %.1f m/s | Prob: %s | Lluvia: %s",
+                    item.getWindSpeed(), item.getPopPercentage(), item.getRainVolumeString());
             holder.binding.tvDetails.setText(details);
 
             loadIcon(item.getIconCode(), holder.binding.ivHourIcon);

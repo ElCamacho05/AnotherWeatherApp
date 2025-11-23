@@ -155,7 +155,7 @@ public class HomeFragment extends Fragment {
     }
 
     /**
-    * Carga la ubicacion guardada en sesiones anteriores en SharedPreferences
+     * Carga la ubicacion guardada en sesiones anteriores en SharedPreferences
      * */
     private void loadSavedLocation() {
         if (getContext() == null) return;
@@ -313,7 +313,11 @@ public class HomeFragment extends Fragment {
         }
         binding.tvWeatherDescription.setText(desc);
 
-        binding.tvFeelsLike.setText("Sensación térmica de: " + current.getFeelsLikeCelsius() + "°C");
+        binding.tvFeelsLike.setText("Sensación térmica: " + current.getFeelsLikeCelsius() + "°C"
+                    + " | Probabilidad: " + current.getPopPercentage()
+                    + " | Lluvia: " + current.getRainVolumeString()
+                    + " | Viento: " + current.getWindSpeed() + " m/s"
+                    + " | Humedad: " + current.getHumidity() + "%");
         binding.tvTime.setText(current.getHourMinuteString());
     }
 
