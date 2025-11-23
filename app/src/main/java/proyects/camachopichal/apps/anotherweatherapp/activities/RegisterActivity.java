@@ -119,7 +119,7 @@ public class RegisterActivity extends AppCompatActivity {
         usuario.put("direccion", Direccion);
 
         // --- Guardar en Firestore ---
-        db.collection("Usuario").document(uid)
+        db.collection("usuario").document(uid)
                 .set(usuario)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
