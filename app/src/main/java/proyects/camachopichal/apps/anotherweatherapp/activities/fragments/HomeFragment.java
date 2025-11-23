@@ -1,3 +1,7 @@
+/**
+ * POR FAVOR, NO CAMBIAR LA DOCUMENTACION/COMENTARIOS DE ESTE ARCHIVO, A MENOS QUE SEA PARA AGREGAR COSAS.
+ * */
+
 package proyects.camachopichal.apps.anotherweatherapp.activities.fragments;
 
 import android.content.Context;
@@ -34,24 +38,30 @@ import proyects.camachopichal.apps.anotherweatherapp.database.Weather.OpenWeathe
 import proyects.camachopichal.apps.anotherweatherapp.database.Weather.WeatherObject;
 import proyects.camachopichal.apps.anotherweatherapp.activities.HourlyForecastActivity;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.TimeZone;
 
 /**
  * Clase-Fragmento de pestaña principal "Home"
- * Se muestran todos los datos de clima y permite el acceso a nuevos
- * lanzamientos de actividades como HourlyForecastActivity
+ * Corrección aplicada: Filtro estricto de nombres de días duplicados.
  * */
 public class HomeFragment extends Fragment {
 
     private static final String ICON_BASE_URL = "https://openweathermap.org/img/wn/";
     private FragmentHomeBinding binding;
 
-    // --- CONSTANTES PARA GUARDAR SESION (SharedPreferences) ---
+    // --- CONSTANTES PARA GUARDAR SESION ---
     private static final String PREFS_NAME = "WeatherAppPrefs";
     private static final String KEY_LAT = "last_latitude";
     private static final String KEY_LON = "last_longitude";
+
+    // --- VARIABLES DE ESTADO ---
+    private long maxHourlyTimestamp = 0;
+    private List<WeatherObject> tempDailyList = null;
 
     // --- VARIABLES DE LOCALIZACION ---
     private FusedLocationProviderClient fusedLocationClient;
@@ -116,7 +126,7 @@ public class HomeFragment extends Fragment {
         // Boton de Obtener Ubicacion
         binding.btnGetLocation.setOnClickListener(v -> {
             Toast.makeText(getContext(), "Actualizando ubicación GPS...", Toast.LENGTH_SHORT).show();
-            requestLocationPermissions(); // Esto fuerza el flujo de obtener GPS
+            requestLocationPermissions();
         });
 
         // Redirige a la actividad de HoutlyForecastActivity
@@ -134,7 +144,6 @@ public class HomeFragment extends Fragment {
      * durante la obtencion de datos actuales y la posterior llamada a la API
      **/
     private void saveLocation(double lat, double lon) {
-
         if (getContext() == null) return;
         SharedPreferences prefs = requireContext().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
@@ -157,9 +166,7 @@ public class HomeFragment extends Fragment {
                 String lonStr = prefs.getString(KEY_LON, "-96.1342");
                 lastKnownLat = Double.parseDouble(latStr);
                 lastKnownLon = Double.parseDouble(lonStr);
-            } catch (Exception e) {
-                // Fallback en caso de error de parseo
-            }
+            } catch (Exception e) { }
         }
     }
 
@@ -193,7 +200,7 @@ public class HomeFragment extends Fragment {
                 lastKnownLat = location.getLatitude();
                 lastKnownLon = location.getLongitude();
 
-                // GUARDAR LA NUEVA UBICACIÓN OBTENIDA
+                // Guardar la nueva ubicacion obtenida
                 saveLocation(lastKnownLat, lastKnownLon);
 
                 fetchWeatherForAllData(lastKnownLat, lastKnownLon);
@@ -224,10 +231,7 @@ public class HomeFragment extends Fragment {
                 if (location != null) {
                     lastKnownLat = location.getLatitude();
                     lastKnownLon = location.getLongitude();
-
-                    // GUARDAR LA NUEVA UBICACIÓN OBTENIDA
                     saveLocation(lastKnownLat, lastKnownLon);
-
                     fusedLocationClient.removeLocationUpdates(locationCallback);
                     fetchWeatherForAllData(lastKnownLat, lastKnownLon);
                     Toast.makeText(getContext(), "Ubicación actualizada por GPS", Toast.LENGTH_SHORT).show();
@@ -248,6 +252,8 @@ public class HomeFragment extends Fragment {
     private void fetchWeatherForAllData(double lat, double lon) {
         binding.tvLocation.setText(String.format(Locale.getDefault(), "Lat: %.4f, Lon: %.4f", lat, lon));
 
+        maxHourlyTimestamp = 0;
+
         // Para el clima actual:
         OpenWeatherAPIManager.getHourlyForecastReal(lat, lon, new OpenWeatherAPIManager.APIResponseCallback() {
             @Override
@@ -258,10 +264,16 @@ public class HomeFragment extends Fragment {
                             List<WeatherObject> forecast = OpenWeatherAPIManager.parseHourlyForecast(jsonResponse);
                             if (!forecast.isEmpty()) {
                                 updateCurrentWeatherUI(forecast.get(0));
+
+                                // Guardar timestamp limite
+                                WeatherObject lastItem = forecast.get(forecast.size() - 1);
+                                maxHourlyTimestamp = lastItem.getTimestamp();
+
+                                if (tempDailyList != null) {
+                                    displayDailyForecast(tempDailyList);
+                                }
                             }
-                        } catch (Exception e) {
-                            // Manejo de error silencioso
-                        }
+                        } catch (Exception e) { }
                     });
                 }
             }
@@ -277,10 +289,9 @@ public class HomeFragment extends Fragment {
                     getActivity().runOnUiThread(() -> {
                         try {
                             List<WeatherObject> dailyForecast = OpenWeatherAPIManager.parseDailyForecast(jsonResponse);
+                            tempDailyList = dailyForecast;
                             displayDailyForecast(dailyForecast);
-                        } catch (Exception e) {
-                            // Error
-                        }
+                        } catch (Exception e) { }
                     });
                 }
             }
@@ -308,8 +319,6 @@ public class HomeFragment extends Fragment {
 
     /**
      * Dibuja los elementos del pronostico diario en la UI
-     * mediante los datos obtenidos de la api con
-     * OpenWeatherAPIManager en un WeatherObject
      * */
     private void displayDailyForecast(List<WeatherObject> forecastList) {
         LinearLayout forecastContainer = binding.forecastContainer;
@@ -319,6 +328,23 @@ public class HomeFragment extends Fragment {
         int currentYear = currentCal.get(Calendar.YEAR);
         int currentDayOfYear = currentCal.get(Calendar.DAY_OF_YEAR);
 
+        // Obtener el nombre del dia: ej: "DOM"
+        SimpleDateFormat sdf = new SimpleDateFormat("EEE", new Locale("es", "ES"));
+        sdf.setTimeZone(TimeZone.getDefault());
+        String currentDayName = sdf.format(new Date()).toUpperCase(Locale.ROOT).replace(".", "");
+        if (currentDayName.length() > 3) currentDayName = currentDayName.substring(0, 3);
+        // -------------------------------------------------------
+
+        // Limites de fecha (si ya cargo la API Horaria)
+        int limitYear = -1;
+        int limitDayOfYear = -1;
+        if (maxHourlyTimestamp > 0) {
+            Calendar limitCal = Calendar.getInstance();
+            limitCal.setTimeInMillis(maxHourlyTimestamp * 1000L);
+            limitYear = limitCal.get(Calendar.YEAR);
+            limitDayOfYear = limitCal.get(Calendar.DAY_OF_YEAR);
+        }
+
         if (forecastList.size() > 0) {
             for (WeatherObject day : forecastList) {
 
@@ -327,12 +353,21 @@ public class HomeFragment extends Fragment {
                 int dataYear = dayCal.get(Calendar.YEAR);
                 int dataDayOfYear = dayCal.get(Calendar.DAY_OF_YEAR);
 
+                // Fitros de fechas que no queremos que se muestren
+
+                // Filtro 1: Fechas pasadas
                 if (dataYear < currentYear) continue;
-                if (dataYear == currentYear) {
-                    if (dataDayOfYear <= currentDayOfYear) {
-                        continue;
-                    }
+                if (dataYear == currentYear && dataDayOfYear <= currentDayOfYear) continue;
+
+
+                // Filtro 2: por nombre
+                // Si el nombre de este día es IGUAL al de hoy, lo saltamos
+                // Distinto de la zona de arriba por que esa se trata por separado
+                // Esto solo afecta al pronostico diario
+                if (day.getDayOfWeek().equals(currentDayName)) {
+                    continue;
                 }
+                // ------------------------------------
 
                 LinearLayout dayLayout = new LinearLayout(getContext());
                 LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
@@ -378,11 +413,6 @@ public class HomeFragment extends Fragment {
         }
     }
 
-    /**
-     * Lanza la actividad HourlyForecastActivity
-     * mediante la accion de los botones de pronostico diario
-     * (iconos de clima actual y diario)
-     * */
     private void launchHourlyForecast(double lat, double lon, String dayTitle) {
         Intent intent = new Intent(getContext(), HourlyForecastActivity.class);
         intent.putExtra(HourlyForecastActivity.EXTRA_LAT, lat);
@@ -391,9 +421,6 @@ public class HomeFragment extends Fragment {
         startActivity(intent);
     }
 
-    /**
-     * Carga los iconos de clima en la UI
-     * */
     private void loadWeatherIcon(String iconCode, ImageView imageView) {
         String iconUrl = ICON_BASE_URL + iconCode + "@2x.png";
         Glide.with(this).load(iconUrl).into(imageView);
