@@ -154,7 +154,7 @@ public class LoginActivity extends AppCompatActivity {
 
     // Método para verificar si el usuario es nuevo y guardar el perfil en Firestore
     private void verificarYGuardarUsuario(String uid, String email, String nombre) {
-        db.collection("Usuario").document(uid).get()
+        db.collection("usuario").document(uid).get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         if (!task.getResult().exists()) {
@@ -175,7 +175,7 @@ public class LoginActivity extends AppCompatActivity {
                             usuario.put("Nombre_Completo", nombreCompletoMap);
 
                             // Guardamos con el UID como ID del documento
-                            db.collection("Usuario").document(uid).set(usuario)
+                            db.collection("usuario").document(uid).set(usuario)
                                     .addOnCompleteListener(taskDB -> {
                                         if (taskDB.isSuccessful()) {
                                             Log.i(TAG, "Perfil de Google guardado en DB.");
