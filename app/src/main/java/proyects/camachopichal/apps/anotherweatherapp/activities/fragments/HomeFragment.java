@@ -305,7 +305,7 @@ public class HomeFragment extends Fragment {
      * */
     private void updateCurrentWeatherUI(WeatherObject current) {
         loadWeatherIcon(current.getIconCode(), binding.ivWeatherIconActual);
-        binding.tvTemp.setText(current.getTempCelsius() + "°C");
+        binding.tvTemp.setText(current.getDayOfWeek() + ", " + current.getTempCelsius() + "°C");
 
         String desc = current.getDescription();
         if(desc != null && !desc.isEmpty()){
