@@ -12,7 +12,12 @@
           "package_name": "proyects.camachopichal.apps.anotherweatherapp"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "879716679832-hn28chpb5pabv1rbo7rr7ght8cgst1s2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyC_zmpJ7jUlCBuj7mplyJEk3djHdyGXAZM"
@@ -20,7 +25,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "879716679832-hn28chpb5pabv1rbo7rr7ght8cgst1s2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }
