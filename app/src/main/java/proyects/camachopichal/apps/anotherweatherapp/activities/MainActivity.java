@@ -14,6 +14,8 @@ import proyects.camachopichal.apps.anotherweatherapp.R;
 import proyects.camachopichal.apps.anotherweatherapp.activities.fragments.HomeFragment;
 import proyects.camachopichal.apps.anotherweatherapp.activities.fragments.NotificationsFragment;
 import proyects.camachopichal.apps.anotherweatherapp.activities.fragments.ProfileFragment;
+import proyects.camachopichal.apps.anotherweatherapp.activities.fragments.PublicationsFragment;
+
 
 import com.google.android.material.navigation.NavigationBarView;
 
@@ -30,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
     HomeFragment homeFragment = new HomeFragment();
     NotificationsFragment notificationsFragment = new NotificationsFragment();
     ProfileFragment profileFragment = new ProfileFragment();
+    PublicationsFragment publicationsFragment = new PublicationsFragment();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +58,10 @@ public class MainActivity extends AppCompatActivity {
                 if (itemId == R.id.nav_home) {
                     loadFragment(homeFragment);
                     return true;
-                } else if (itemId == R.id.nav_notifications) {
+                }else if (itemId == R.id.nav_publications){
+                    loadFragment(publicationsFragment);
+                    return true;
+                }else if (itemId == R.id.nav_notifications) {
                     loadFragment(notificationsFragment);
                     return true;
                 } else if (itemId == R.id.nav_profile) {
