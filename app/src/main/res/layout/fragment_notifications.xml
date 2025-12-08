@@ -12,36 +12,30 @@
         android:orientation="vertical"
         android:padding="16dp">
 
+        <!-- Encabezados -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Notificaciones y Calendario"
             android:textSize="22sp"
             android:textStyle="bold"
-            android:layout_marginBottom="8dp"/>
+            android:layout_marginBottom="4dp"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Clima y recordatorios"
             android:textSize="16sp"
-            android:layout_marginBottom="16dp"/>
+            android:textColor="#757575"
+            android:layout_marginBottom="24dp"/>
 
-        <androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            app:cardCornerRadius="8dp">
-        </androidx.cardview.widget.CardView>
-
+        <!-- Sección de Calendario y Botón -->
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
             android:layout_marginBottom="16dp">
 
             <TextView
-                android:id="@+id/tvCalendarTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Calendario de eventos"
@@ -55,27 +49,43 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="+ Nuevo"
+                android:backgroundTint="#6200EE"
                 android:layout_alignParentEnd="true"/>
-
         </RelativeLayout>
 
+        <!-- Calendario -->
         <CalendarView
             android:id="@+id/calendarView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-
-        <TextView
-            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="7 de Noviembre 2025"
+            android:layout_marginBottom="16dp"/>
+
+        <!-- Separador (Opcional) -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#E0E0E0"
+            android:layout_marginBottom="16dp"/>
+
+        <!-- Título de la Fecha Seleccionada -->
+        <TextView
+            android:id="@+id/tvFechaSeleccionada"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Selecciona una fecha"
+            android:textSize="18sp"
             android:textStyle="bold"
-            android:layout_marginTop="16dp"/>
+            android:layout_marginBottom="8dp"/>
 
+        <!-- Lista de Eventos (o mensaje de vacío) -->
         <TextView
-            android:layout_width="wrap_content"
+            android:id="@+id/tvListaEventos"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="No hay eventos para este dia"
-            android:layout_marginTop="8dp"/>
+            android:text="Toca un día en el calendario para ver tus eventos."
+            android:textSize="16sp"
+            android:textColor="#616161"
+            android:minLines="3"/>
 
     </LinearLayout>
 

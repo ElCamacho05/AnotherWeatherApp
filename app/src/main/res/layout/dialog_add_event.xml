@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="24dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Nuevo Evento"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:layout_marginBottom="16dp"/>
+
+    <!-- Título del Evento -->
+    <EditText
+        android:id="@+id/etTituloEvento"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Título del evento"
+        android:inputType="textCapSentences"
+        android:layout_marginBottom="12dp"/>
+
+    <!-- Selector de Fecha -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Fecha del evento:"
+        android:textStyle="bold"
+        android:layout_marginTop="8dp"/>
+
+    <TextView
+        android:id="@+id/tvFechaEvento"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Seleccionar fecha"
+        android:textSize="16sp"
+        android:padding="12dp"
+        android:background="@android:drawable/editbox_background"
+        android:layout_marginBottom="12dp"
+        android:drawableEnd="@android:drawable/ic_menu_my_calendar"/>
+
+    <!-- Ubicación -->
+    <EditText
+        android:id="@+id/etUbicacionEvento"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Ubicación (Lugar/Ciudad)"
+        android:inputType="textPostalAddress"
+        android:layout_marginBottom="12dp"/>
+
+    <!-- Nota -->
+    <EditText
+        android:id="@+id/etNotaEvento"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Nota o descripción (Opcional)"
+        android:inputType="textMultiLine"
+        android:lines="3"
+        android:gravity="top|start"
+        android:layout_marginBottom="24dp"/>
+
+    <!-- Botones -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="end">
+
+        <Button
+            android:id="@+id/btnCancelarEvento"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cancelar"
+            android:backgroundTint="#808080"
+            android:layout_marginEnd="8dp"/>
+
+        <Button
+            android:id="@+id/btnGuardarEvento"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Guardar"
+            android:backgroundTint="#6200EE"/>
+    </LinearLayout>
+
+</LinearLayout>
