@@ -1,78 +1,93 @@
 package proyects.camachopichal.apps.anotherweatherapp.activities.fragments;
 
-
+import android.content.Intent;
 import android.os.Bundle;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
-// Importa la clase de View Binding generada
-import com.google.firebase.auth.FirebaseAuth;
+import android.widget.Toast;
 
 import proyects.camachopichal.apps.anotherweatherapp.databinding.FragmentProfileBinding;
+import proyects.camachopichal.apps.anotherweatherapp.activities.LoginActivity;
+
+// Importaciones de Firebase y Google
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 
 public class ProfileFragment extends Fragment {
 
-    // Se usa un objeto nullable y privado para el binding
     private FragmentProfileBinding binding;
     private FirebaseAuth mAuth;
 
     public ProfileFragment() {
-        // Constructor público vacío requerido
+        // Constructor vacío requerido
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // 1. Inflar el layout usando el objeto Binding
+        // Inflar el layout usando View Binding
         binding = FragmentProfileBinding.inflate(inflater, container, false);
 
-        // 2. Obtener la vista raíz (root view)
-        View view = binding.getRoot();
-
-        // lógica para cargar los datos del usuario
+        // Inicializar Firebase Auth
         mAuth = FirebaseAuth.getInstance();
 
-        return view;
+        return binding.getRoot();
     }
 
     @Override
-    public void  onViewCreated(@NonNull View view, @Nullable Bundle saveIntanceState){
-        super.onViewCreated(view, saveIntanceState);
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
+        // 1. Cargar datos del usuario (Email)
         cargarEmailUsuario();
-        binding.tvLocationsCount.setText("0");
+
+        // 2. Configurar el botón de Cerrar Sesión
+        binding.btnCerrarSesion.setOnClickListener(v -> cerrarSesionUsuario());
     }
 
-    public void cargarEmailUsuario(){
-        // 1. Verificar si hay un usuario logueado
+    private void cargarEmailUsuario() {
         if (mAuth.getCurrentUser() != null) {
-
-            // 2. Obtener el email directamente del objeto de Firebase User
             String email = mAuth.getCurrentUser().getEmail();
-
-            // 3. Mostrar el email en el TextView
             if (email != null) {
-                // Asumo que el TextView para el email tiene el ID: tvUserEmail
                 binding.tvUserEmail.setText(email);
             } else {
                 binding.tvUserEmail.setText("Email no disponible");
             }
-
         } else {
-            // Si no hay usuario logueado (lo cual no debería pasar si vienes de LoginActivity)
             binding.tvUserEmail.setText("Desconectado");
         }
+    }
+
+    /**
+     * Lógica del Punto 2: Cerrar sesión y redirigir
+     */
+    private void cerrarSesionUsuario() {
+        // A. Cerrar sesión en Firebase (Cierra Email/Password y Google en el backend)
+        mAuth.signOut();
+
+        // B. Cerrar sesión en el cliente de Google
+        // (Esto es vital para que si usas Google Sign-In, te deje elegir cuenta la próxima vez)
+        GoogleSignIn.getClient(requireActivity(),
+                new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).build()
+        ).signOut();
+
+        // C. Redirigir al LoginActivity y limpiar la pila
+        Intent intent = new Intent(requireActivity(), LoginActivity.class);
+        // Estas banderas (flags) borran el historial de pantallas para que al dar "Atrás" la app se cierre en lugar de volver al perfil
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+
+        Toast.makeText(getContext(), "Sesión cerrada correctamente.", Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        // IMPORTANTE: Limpiar la referencia del binding para evitar fugas de memoria
         binding = null;
     }
 }
