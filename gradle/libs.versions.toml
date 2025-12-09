@@ -9,6 +9,7 @@ material = "1.13.0"
 playServicesLocation = "21.3.0"
 firebaseAuth = "24.0.1"
 firebaseFirestore = "26.0.2"
+firebaseStorage = "22.0.1"
 
 [libraries]
 compiler = { module = "com.github.bumptech.glide:compiler", version.ref = "glideVersion" }
@@ -21,6 +22,7 @@ material = { group = "com.google.android.material", name = "material", version.r
 play-services-location = { module = "com.google.android.gms:play-services-location", version.ref = "playServicesLocation" }
 firebase-auth = { group = "com.google.firebase", name = "firebase-auth", version.ref = "firebaseAuth" }
 firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore", version.ref = "firebaseFirestore" }
+firebase-storage = { group = "com.google.firebase", name = "firebase-storage", version.ref = "firebaseStorage" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "879716679832-cbfg7c1kdp3nihnu0kf4512i2es0svmk.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "proyects.camachopichal.apps.anotherweatherapp",
+            "certificate_hash": "d664baefdfaa254acbc506323511b6fc1ce2846c"
+          }
+        },
+        {
           "client_id": "879716679832-hn28chpb5pabv1rbo7rr7ght8cgst1s2.apps.googleusercontent.com",
           "client_type": 3
         }
