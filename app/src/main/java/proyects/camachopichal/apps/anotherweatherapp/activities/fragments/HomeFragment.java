@@ -6,6 +6,8 @@ package proyects.camachopichal.apps.anotherweatherapp.activities.fragments;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
@@ -25,6 +27,10 @@ import android.widget.TextView;
 import android.view.Gravity;
 import android.util.TypedValue;
 import android.content.Intent;
+import java.io.IOException;
+import java.util.Map;
+import java.util.HashMap;
+
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -32,6 +38,8 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import proyects.camachopichal.apps.anotherweatherapp.databinding.FragmentHomeBinding;
 import proyects.camachopichal.apps.anotherweatherapp.database.Weather.OpenWeatherAPIManager;
@@ -68,6 +76,10 @@ public class HomeFragment extends Fragment {
     private LocationRequest locationRequest;
     private LocationCallback locationCallback;
     private ActivityResultLauncher<String[]> locationPermissionRequest;
+
+    // ---- FIREBASE ----
+    private FirebaseFirestore db;
+    private FirebaseAuth mAuth;
 
     // Prueba con coordenadas preestablecidas (CDMX)
         private double lastKnownLat = 19.3909832;
@@ -119,8 +131,13 @@ public class HomeFragment extends Fragment {
 
         binding.btnSearch.setOnClickListener(v -> {
             String ubicacion = binding.etSearchLocation.getText().toString();
-            Toast.makeText(getContext(), "Buscando: " + ubicacion, Toast.LENGTH_SHORT).show();
-            // demas logica de busqueda (TODO)
+            if (!ubicacion.isEmpty()) {
+                Toast.makeText(getContext(), "Buscando: " + ubicacion, Toast.LENGTH_SHORT).show();
+                // Llamamos a la función que busca coordenadas y guarda en historial
+                buscarCoordenadasYGuardar(ubicacion);
+            } else {
+                Toast.makeText(getContext(), "Ingresa una ciudad", Toast.LENGTH_SHORT).show();
+            }
         });
 
         // Boton de Obtener Ubicacion
@@ -137,7 +154,66 @@ public class HomeFragment extends Fragment {
 
         return view;
     }
+    //---- METODO PARA BUSCAR Y GUARDAR EL HOSTORIA ----
+    private void buscarCoordenadasYGuardar(String ciudadNombre){
+        Geocoder geocoder = new Geocoder(requireContext(),Locale.getDefault());
+        try{
+            List<Address> addresses = geocoder.getFromLocationName(ciudadNombre,1);
+            if (addresses != null && !addresses.isEmpty()) {
+                Address address = addresses.get(0);
+                double lat = address.getLatitude();
+                double lon = address.getLongitude();
 
+                // Construimos una dirección más bonita
+                String nombreCompleto = address.getFeatureName();
+                if (address.getLocality() != null) nombreCompleto += ", " + address.getLocality();
+                if (address.getAdminArea() != null) nombreCompleto += ", " + address.getAdminArea();
+
+                // Actualizamos variables globales y guardamos en prefs
+                lastKnownLat = lat;
+                lastKnownLon = lon;
+                saveLocation(lat, lon);
+
+                // Traemos el clima
+                fetchWeatherForAllData(lat, lon);
+
+                // Guardamos en Firebase (Historial)
+                guardarEnHistorial(nombreCompleto, lat, lon, ciudadNombre);
+            } else {
+                Toast.makeText(getContext(), "Ciudad no encontrada", Toast.LENGTH_SHORT).show();
+            }
+        } catch (IOException e) {
+            Toast.makeText(getContext(), "Error de red al buscar dirección", Toast.LENGTH_SHORT).show();
+
+        }
+    }
+
+    private void guardarEnHistorial(String direccionBonita, double lat, double lon, String terminoBusqueda) {
+
+        if (mAuth == null) {
+            mAuth = FirebaseAuth.getInstance();
+        }
+        if (mAuth.getCurrentUser() == null) return;
+        String uid = mAuth.getCurrentUser().getUid();
+
+        Map<String, Object> busqueda = new HashMap<>();
+        busqueda.put("termino_busqueda", terminoBusqueda);
+        busqueda.put("direccion_completa", direccionBonita);
+        busqueda.put("latitud", lat);
+        busqueda.put("longitud", lon);
+        busqueda.put("fecha_busqueda", new Date());
+
+        if (db == null) {
+            db = FirebaseFirestore.getInstance();
+        }
+
+        // Guardamos en la subcolección del usuario
+        db.collection("usuario").document(uid).collection("Historial_Busquedas")
+                .add(busqueda)
+                .addOnSuccessListener(doc -> {
+                    // Historial guardado silenciosamente
+                });
+    }
     /**
      * Guarda la ubicacion en SharedPreferences para poder usarla
      * en otras sesiones de manera inmediata al cargar los datos en pantalla
