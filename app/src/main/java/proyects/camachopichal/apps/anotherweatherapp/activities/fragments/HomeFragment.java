@@ -57,7 +57,7 @@ import java.util.TimeZone;
 
 /**
  * Clase-Fragmento de pestaña principal "Home"
- * Corrección aplicada: Botón Buscar ahora usa Geocoder para encontrar coordenadas y luego abre el Mapa en ese punto.
+ * Corrección: Botón "Obtener ubicación" restaura funcionalidad GPS directa.
  * */
 public class HomeFragment extends Fragment {
 
@@ -89,7 +89,6 @@ public class HomeFragment extends Fragment {
     // FIN VARIABLES DE LOCALIZACION ----
 
     // --- LAUNCHER DEL MAPA ---
-    // Recibe las coordenadas seleccionadas por el usuario en MapSelectionActivity (cuando da Confirmar)
     private final ActivityResultLauncher<Intent> mapActivityLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
@@ -97,7 +96,7 @@ public class HomeFragment extends Fragment {
                     double lat = result.getData().getDoubleExtra("selected_lat", 0.0);
                     double lon = result.getData().getDoubleExtra("selected_lon", 0.0);
 
-                    Toast.makeText(getContext(), "Ubicación confirmada", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Ubicación seleccionada del mapa", Toast.LENGTH_SHORT).show();
 
                     // 1. Actualizar variables y guardar
                     lastKnownLat = lat;
@@ -108,7 +107,6 @@ public class HomeFragment extends Fragment {
                     fetchWeatherForAllData(lat, lon);
 
                     // 3. (Visual) Poner el nombre de la ciudad en la barra de búsqueda
-                    // Esto ayuda a que el usuario sepa qué ubicación seleccionó en el mapa
                     actualizarTextoDireccion(lat, lon);
                 }
             });
@@ -152,26 +150,28 @@ public class HomeFragment extends Fragment {
         // Carga los datos en la interfaz con los datos guardados de otras sesiones
         fetchWeatherForAllData(lastKnownLat, lastKnownLon);
 
-        // Se piden permisos de ubicacion al usuario (GPS)
+        // Se piden permisos de ubicacion al usuario (GPS) al iniciar
         requestLocationPermissions();
 
-        // --- BOTÓN BUSCAR (Lógica Modificada) ---
+        // --- BOTÓN BUSCAR ---
+        // Abre el mapa en la ubicación escrita o actual si está vacío
         binding.btnSearch.setOnClickListener(v -> {
             String ubicacion = binding.etSearchLocation.getText().toString();
             if (!ubicacion.isEmpty()) {
-                // Si hay texto, buscamos coordenadas y ABRIMOS EL MAPA ahí
                 buscarCoordenadasYAbrirMapa(ubicacion);
             } else {
                 Toast.makeText(getContext(), "Escribe una ciudad primero", Toast.LENGTH_SHORT).show();
             }
         });
 
-        // Boton de Obtener Ubicacion (Este sigue abriendo el mapa en la ubicación actual o guardada)
+        // --- BOTÓN OBTENER MI UBICACIÓN (Restaurado a GPS) ---
+        // Ahora fuerza la actualización vía GPS del dispositivo
         binding.btnGetLocation.setOnClickListener(v -> {
-            abrirMapaSeleccion(lastKnownLat, lastKnownLon);
+            Toast.makeText(getContext(), "Obteniendo ubicación GPS...", Toast.LENGTH_SHORT).show();
+            requestLocationPermissions();
         });
 
-        // Redirige a la actividad de HoutlyForecastActivity
+        // Redirige a la actividad de HourlyForecastActivity
         binding.cardCurrentWeather.setOnClickListener(v -> {
             launchHourlyForecast(lastKnownLat, lastKnownLon, "HOY");
         });
@@ -189,16 +189,11 @@ public class HomeFragment extends Fragment {
         mapActivityLauncher.launch(intent);
     }
 
-    //---- METODO PARA BUSCAR POR TEXTO Y LUEGO ABRIR MAPA ----
     private void buscarCoordenadasYAbrirMapa(String ciudadNombre){
-        // Mostramos un toast para que el usuario sepa que está cargando
         Toast.makeText(getContext(), "Buscando " + ciudadNombre + "...", Toast.LENGTH_SHORT).show();
 
         Geocoder geocoder = new Geocoder(requireContext(), Locale.getDefault());
         try {
-            // Ejecutamos la búsqueda en un hilo secundario idealmente, pero Geocoder suele ser rápido
-            // Nota: getFromLocationName es bloqueante, en una app real compleja se usa Executor,
-            // pero para este proyecto escolar funciona bien aquí si la red es estable.
             List<Address> addresses = geocoder.getFromLocationName(ciudadNombre, 1);
 
             if (addresses != null && !addresses.isEmpty()) {
@@ -206,11 +201,7 @@ public class HomeFragment extends Fragment {
                 double lat = address.getLatitude();
                 double lon = address.getLongitude();
 
-                // ¡AQUI ESTA EL CAMBIO!
-                // En lugar de cargar el clima directo, abrimos el mapa en estas coordenadas
                 abrirMapaSeleccion(lat, lon);
-
-                // Opcional: Guardar en historial que se buscó esto
                 guardarEnHistorial(ciudadNombre, lat, lon, ciudadNombre);
 
             } else {
@@ -222,8 +213,6 @@ public class HomeFragment extends Fragment {
         }
     }
 
-    // Método auxiliar para obtener nombre de ciudad desde coordenadas (Reverse Geocoding)
-    // Se usa cuando regresamos del mapa para llenar la cajita de texto
     private void actualizarTextoDireccion(double lat, double lon) {
         Geocoder geocoder = new Geocoder(requireContext(), Locale.getDefault());
         try {
@@ -234,7 +223,7 @@ public class HomeFragment extends Fragment {
                 String direccionTexto = address.getLocality();
                 if (direccionTexto == null) direccionTexto = address.getSubAdminArea();
                 if (direccionTexto == null) direccionTexto = address.getAdminArea();
-                if (direccionTexto == null) direccionTexto = "Ubicación Seleccionada";
+                if (direccionTexto == null) direccionTexto = "Ubicación GPS";
 
                 binding.etSearchLocation.setText(direccionTexto);
             }
@@ -261,7 +250,7 @@ public class HomeFragment extends Fragment {
                 .add(busqueda);
     }
 
-    // --- MÉTODOS DE PERSISTENCIA Y UBICACIÓN (Sin cambios mayores) ---
+    // --- MÉTODOS DE PERSISTENCIA Y UBICACIÓN ---
 
     private void saveLocation(double lat, double lon) {
         if (getContext() == null) return;
@@ -309,12 +298,15 @@ public class HomeFragment extends Fragment {
                 lastKnownLon = location.getLongitude();
                 saveLocation(lastKnownLat, lastKnownLon);
                 fetchWeatherForAllData(lastKnownLat, lastKnownLon);
-                // No mostramos toast aquí para no saturar al inicio
+                Toast.makeText(getContext(), "Ubicación actualizada por GPS", Toast.LENGTH_SHORT).show();
+
+                // Actualizar el texto para que el usuario sepa dónde está el GPS
+                actualizarTextoDireccion(lastKnownLat, lastKnownLon);
             } else {
                 requestNewLocationData();
             }
         }).addOnFailureListener(e -> {
-            // Error silencioso o log
+            // Error silencioso
         });
     }
 
@@ -336,6 +328,10 @@ public class HomeFragment extends Fragment {
                     saveLocation(lastKnownLat, lastKnownLon);
                     fusedLocationClient.removeLocationUpdates(locationCallback);
                     fetchWeatherForAllData(lastKnownLat, lastKnownLon);
+                    Toast.makeText(getContext(), "Ubicación actualizada por GPS (Live)", Toast.LENGTH_SHORT).show();
+
+                    // Actualizar el texto
+                    actualizarTextoDireccion(lastKnownLat, lastKnownLon);
                 }
             }
         };
