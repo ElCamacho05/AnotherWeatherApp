@@ -29,25 +29,16 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@id/etSearchLocation"
             app:layout_constraintBottom_toBottomOf="@id/etSearchLocation" />
+
         <Button
             android:id="@+id/btnGetLocation"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="Obtener mi ubicacion"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/btnCaptureWeather"
-            app:layout_constraintTop_toBottomOf="@id/etSearchLocation"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"/>
-
-        <Button
-            android:id="@+id/btnCaptureWeather"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="Capturar clima"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/btnGetLocation"
-            app:layout_constraintTop_toTopOf="@id/btnGetLocation" />
+            app:layout_constraintTop_toBottomOf="@id/etSearchLocation"
+            android:layout_marginTop="8dp"/>
 
         <androidx.cardview.widget.CardView
             android:id="@+id/cardCurrentWeather"
