@@ -29,7 +29,6 @@ import android.view.Gravity;
 import android.util.TypedValue;
 import android.content.Intent;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Map;
 import java.util.HashMap;
 
@@ -47,7 +46,7 @@ import proyects.camachopichal.apps.anotherweatherapp.databinding.FragmentHomeBin
 import proyects.camachopichal.apps.anotherweatherapp.database.Weather.OpenWeatherAPIManager;
 import proyects.camachopichal.apps.anotherweatherapp.database.Weather.WeatherObject;
 import proyects.camachopichal.apps.anotherweatherapp.activities.HourlyForecastActivity;
-import proyects.camachopichal.apps.anotherweatherapp.activities.MapSelectionActivity; // Importar la nueva actividad
+import proyects.camachopichal.apps.anotherweatherapp.activities.MapSelectionActivity;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -58,12 +57,11 @@ import java.util.TimeZone;
 
 /**
  * Clase-Fragmento de pestaña principal "Home"
- * Modificado para abrir MapSelectionActivity al buscar ubicación manual.
+ * Corrección aplicada: Botón Buscar ahora usa Geocoder para encontrar coordenadas y luego abre el Mapa en ese punto.
  * */
 public class HomeFragment extends Fragment {
 
     private static final String ICON_BASE_URL = "https://openweathermap.org/img/wn/";
-
     private FragmentHomeBinding binding;
 
     // --- CONSTANTES PARA GUARDAR SESION ---
@@ -90,7 +88,8 @@ public class HomeFragment extends Fragment {
     private double lastKnownLon = -99.3084198;
     // FIN VARIABLES DE LOCALIZACION ----
 
-    // Launcher para recibir el resultado del mapa
+    // --- LAUNCHER DEL MAPA ---
+    // Recibe las coordenadas seleccionadas por el usuario en MapSelectionActivity (cuando da Confirmar)
     private final ActivityResultLauncher<Intent> mapActivityLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
@@ -98,16 +97,19 @@ public class HomeFragment extends Fragment {
                     double lat = result.getData().getDoubleExtra("selected_lat", 0.0);
                     double lon = result.getData().getDoubleExtra("selected_lon", 0.0);
 
-                    Toast.makeText(getContext(), "Ubicación seleccionada del mapa", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Ubicación confirmada", Toast.LENGTH_SHORT).show();
 
-                    // Actualizar todo con las nuevas coordenadas
+                    // 1. Actualizar variables y guardar
                     lastKnownLat = lat;
                     lastKnownLon = lon;
                     saveLocation(lat, lon);
+
+                    // 2. Actualizar el clima automáticamente
                     fetchWeatherForAllData(lat, lon);
 
-                    // Opcional: Buscar el nombre de la ciudad para guardar en historial
-                    buscarNombreCiudadYGuardar(lat, lon);
+                    // 3. (Visual) Poner el nombre de la ciudad en la barra de búsqueda
+                    // Esto ayuda a que el usuario sepa qué ubicación seleccionó en el mapa
+                    actualizarTextoDireccion(lat, lon);
                 }
             });
 
@@ -150,28 +152,23 @@ public class HomeFragment extends Fragment {
         // Carga los datos en la interfaz con los datos guardados de otras sesiones
         fetchWeatherForAllData(lastKnownLat, lastKnownLon);
 
-        // Se piden permisos de ubicacion al usuario (GPS automático al inicio)
+        // Se piden permisos de ubicacion al usuario (GPS)
         requestLocationPermissions();
 
-        // Boton de busqueda por texto (mantener lógica original o eliminar si solo quieres mapa)
+        // --- BOTÓN BUSCAR (Lógica Modificada) ---
         binding.btnSearch.setOnClickListener(v -> {
             String ubicacion = binding.etSearchLocation.getText().toString();
             if (!ubicacion.isEmpty()) {
-                buscarCoordenadasYGuardar(ubicacion);
+                // Si hay texto, buscamos coordenadas y ABRIMOS EL MAPA ahí
+                buscarCoordenadasYAbrirMapa(ubicacion);
             } else {
-                // Si está vacío, abrir el mapa como alternativa
-                abrirMapaSeleccion();
+                Toast.makeText(getContext(), "Escribe una ciudad primero", Toast.LENGTH_SHORT).show();
             }
         });
 
-        // Boton de "Obtener mi ubicación" (Lo cambiamos para que abra el MAPA interactivo)
+        // Boton de Obtener Ubicacion (Este sigue abriendo el mapa en la ubicación actual o guardada)
         binding.btnGetLocation.setOnClickListener(v -> {
-            // Opción A: Abrir Mapa Interactivo
-            abrirMapaSeleccion();
-
-            // Opción B (Si quieres conservar el GPS automático en este botón, descomenta esto y comenta la línea de arriba):
-            // Toast.makeText(getContext(), "Actualizando ubicación GPS...", Toast.LENGTH_SHORT).show();
-            // requestLocationPermissions();
+            abrirMapaSeleccion(lastKnownLat, lastKnownLon);
         });
 
         // Redirige a la actividad de HoutlyForecastActivity
@@ -182,50 +179,67 @@ public class HomeFragment extends Fragment {
         return view;
     }
 
-    private void abrirMapaSeleccion() {
+    /**
+     * Método genérico para abrir el mapa en unas coordenadas específicas
+     */
+    private void abrirMapaSeleccion(double lat, double lon) {
         Intent intent = new Intent(getContext(), MapSelectionActivity.class);
-        intent.putExtra("lat", lastKnownLat);
-        intent.putExtra("lon", lastKnownLon);
+        intent.putExtra("lat", lat);
+        intent.putExtra("lon", lon);
         mapActivityLauncher.launch(intent);
     }
 
-    //---- METODO PARA BUSCAR POR TEXTO ----
-    private void buscarCoordenadasYGuardar(String ciudadNombre){
-        Geocoder geocoder = new Geocoder(requireContext(),Locale.getDefault());
-        try{
-            List<Address> addresses = geocoder.getFromLocationName(ciudadNombre,1);
+    //---- METODO PARA BUSCAR POR TEXTO Y LUEGO ABRIR MAPA ----
+    private void buscarCoordenadasYAbrirMapa(String ciudadNombre){
+        // Mostramos un toast para que el usuario sepa que está cargando
+        Toast.makeText(getContext(), "Buscando " + ciudadNombre + "...", Toast.LENGTH_SHORT).show();
+
+        Geocoder geocoder = new Geocoder(requireContext(), Locale.getDefault());
+        try {
+            // Ejecutamos la búsqueda en un hilo secundario idealmente, pero Geocoder suele ser rápido
+            // Nota: getFromLocationName es bloqueante, en una app real compleja se usa Executor,
+            // pero para este proyecto escolar funciona bien aquí si la red es estable.
+            List<Address> addresses = geocoder.getFromLocationName(ciudadNombre, 1);
+
             if (addresses != null && !addresses.isEmpty()) {
                 Address address = addresses.get(0);
                 double lat = address.getLatitude();
                 double lon = address.getLongitude();
 
-                lastKnownLat = lat;
-                lastKnownLon = lon;
-                saveLocation(lat, lon);
-                fetchWeatherForAllData(lat, lon);
+                // ¡AQUI ESTA EL CAMBIO!
+                // En lugar de cargar el clima directo, abrimos el mapa en estas coordenadas
+                abrirMapaSeleccion(lat, lon);
 
-                // Guardar historial
+                // Opcional: Guardar en historial que se buscó esto
                 guardarEnHistorial(ciudadNombre, lat, lon, ciudadNombre);
+
             } else {
-                Toast.makeText(getContext(), "Ciudad no encontrada", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Ciudad no encontrada en el mapa", Toast.LENGTH_SHORT).show();
             }
         } catch (IOException e) {
             Toast.makeText(getContext(), "Error de red al buscar dirección", Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
         }
     }
 
-    // Método auxiliar para obtener nombre de ciudad desde coordenadas (Reverse Geocoding) para el historial
-    private void buscarNombreCiudadYGuardar(double lat, double lon) {
+    // Método auxiliar para obtener nombre de ciudad desde coordenadas (Reverse Geocoding)
+    // Se usa cuando regresamos del mapa para llenar la cajita de texto
+    private void actualizarTextoDireccion(double lat, double lon) {
         Geocoder geocoder = new Geocoder(requireContext(), Locale.getDefault());
         try {
             List<Address> addresses = geocoder.getFromLocation(lat, lon, 1);
             if (addresses != null && !addresses.isEmpty()) {
-                String ciudad = addresses.get(0).getLocality();
-                if (ciudad == null) ciudad = "Ubicación en Mapa";
-                guardarEnHistorial(ciudad, lat, lon, "Selección en Mapa");
+                Address address = addresses.get(0);
+
+                String direccionTexto = address.getLocality();
+                if (direccionTexto == null) direccionTexto = address.getSubAdminArea();
+                if (direccionTexto == null) direccionTexto = address.getAdminArea();
+                if (direccionTexto == null) direccionTexto = "Ubicación Seleccionada";
+
+                binding.etSearchLocation.setText(direccionTexto);
             }
         } catch (IOException e) {
-            // Ignorar error silenciosamente
+            e.printStackTrace();
         }
     }
 
@@ -247,11 +261,7 @@ public class HomeFragment extends Fragment {
                 .add(busqueda);
     }
 
-    // ... [RESTO DE MÉTODOS SIN CAMBIOS: saveLocation, loadSavedLocation, requestLocationPermissions, fetchLastLocation, requestNewLocationData, fetchWeatherForAllData, updateCurrentWeatherUI, displayDailyForecast, launchHourlyForecast, loadWeatherIcon, onDestroyView] ...
-
-    // (Incluir aquí el resto de métodos tal cual estaban en tu archivo original para no romper nada)
-    // Para simplificar la respuesta, asumo que mantienes los métodos de abajo igual.
-    // Solo asegúrate de copiar los métodos de persistencia y localización del archivo anterior.
+    // --- MÉTODOS DE PERSISTENCIA Y UBICACIÓN (Sin cambios mayores) ---
 
     private void saveLocation(double lat, double lon) {
         if (getContext() == null) return;
@@ -299,12 +309,12 @@ public class HomeFragment extends Fragment {
                 lastKnownLon = location.getLongitude();
                 saveLocation(lastKnownLat, lastKnownLon);
                 fetchWeatherForAllData(lastKnownLat, lastKnownLon);
-                Toast.makeText(getContext(), "Ubicación actualizada", Toast.LENGTH_SHORT).show();
+                // No mostramos toast aquí para no saturar al inicio
             } else {
                 requestNewLocationData();
             }
         }).addOnFailureListener(e -> {
-            Toast.makeText(getContext(), "Error al obtener ubicación.", Toast.LENGTH_SHORT).show();
+            // Error silencioso o log
         });
     }
 
@@ -326,7 +336,6 @@ public class HomeFragment extends Fragment {
                     saveLocation(lastKnownLat, lastKnownLon);
                     fusedLocationClient.removeLocationUpdates(locationCallback);
                     fetchWeatherForAllData(lastKnownLat, lastKnownLon);
-                    Toast.makeText(getContext(), "Ubicación actualizada por GPS", Toast.LENGTH_SHORT).show();
                 }
             }
         };
@@ -384,13 +393,19 @@ public class HomeFragment extends Fragment {
 
     private void updateCurrentWeatherUI(WeatherObject current) {
         loadWeatherIcon(current.getIconCode(), binding.ivWeatherIconActual);
-        binding.tvTemp.setText(current.getTempCelsius() + "°C");
+        binding.tvTemp.setText(current.getDayOfWeek() + ", " + current.getTempCelsius() + "°C");
+
         String desc = current.getDescription();
         if(desc != null && !desc.isEmpty()){
             desc = desc.substring(0, 1).toUpperCase() + desc.substring(1);
         }
         binding.tvWeatherDescription.setText(desc);
-        binding.tvFeelsLike.setText("Sensación: " + current.getFeelsLikeCelsius() + "°C | Lluvia: " + current.getRainVolumeString());
+
+        binding.tvFeelsLike.setText("Sensación térmica: " + current.getFeelsLikeCelsius() + "°C"
+                + " | Probabilidad: " + current.getPopPercentage()
+                + " | Lluvia: " + current.getRainVolumeString()
+                + " | Viento: " + current.getWindSpeed() + " m/s"
+                + " | Humedad: " + current.getHumidity() + "%");
         binding.tvTime.setText(current.getHourMinuteString());
     }
 
