@@ -63,6 +63,10 @@
             android:name=".activities.HourlyForecastActivity"
             android:exported="false" />
 
+        <!-- DetailedWeatherActivity (Detalles del clima por hora) -->
+        <activity
+            android:name=".activities.DetailedWeatherActivity"
+            android:exported="false" />
     </application>
 
 </manifest>

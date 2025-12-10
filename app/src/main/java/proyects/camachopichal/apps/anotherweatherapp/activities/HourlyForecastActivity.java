@@ -3,7 +3,9 @@ package proyects.camachopichal.apps.anotherweatherapp.activities;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.content.Context;
+import android.content.Intent; // Importar Intent
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -185,6 +187,28 @@ public class HourlyForecastActivity extends AppCompatActivity {
             holder.binding.tvDetails.setText(details);
 
             loadIcon(item.getIconCode(), holder.binding.ivHourIcon);
+
+            // --- CLICK LISTENER PARA ABRIR EL DETALLE COMPLETO ---
+            holder.itemView.setOnClickListener(v -> {
+                Intent intent = new Intent(context, DetailedWeatherActivity.class);
+
+                // Pasamos TODOS los datos del objeto a la nueva actividad
+                intent.putExtra(DetailedWeatherActivity.EXTRA_TIME, item.getHourMinuteString());
+                intent.putExtra(DetailedWeatherActivity.EXTRA_TEMP, item.getTempCelsius());
+                intent.putExtra(DetailedWeatherActivity.EXTRA_FEELS_LIKE, item.getFeelsLikeCelsius());
+                intent.putExtra(DetailedWeatherActivity.EXTRA_DESC, item.getDescription());
+                intent.putExtra(DetailedWeatherActivity.EXTRA_ICON, item.getIconCode());
+
+                intent.putExtra(DetailedWeatherActivity.EXTRA_WIND_SPEED, item.getWindSpeed());
+                intent.putExtra(DetailedWeatherActivity.EXTRA_WIND_DEG, item.getWindDeg());
+                intent.putExtra(DetailedWeatherActivity.EXTRA_HUMIDITY, item.getHumidity());
+                intent.putExtra(DetailedWeatherActivity.EXTRA_PRESSURE, item.getPressure());
+                intent.putExtra(DetailedWeatherActivity.EXTRA_POP, item.getPopPercentage());
+                intent.putExtra(DetailedWeatherActivity.EXTRA_RAIN_VOL, item.getRainVolumeString());
+                intent.putExtra(DetailedWeatherActivity.EXTRA_VISIBILITY, item.getVisibility());
+
+                context.startActivity(intent);
+            });
         }
 
         @Override
