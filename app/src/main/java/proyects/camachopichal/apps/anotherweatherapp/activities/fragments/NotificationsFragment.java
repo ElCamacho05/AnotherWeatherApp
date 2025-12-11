@@ -204,7 +204,7 @@ public class NotificationsFragment extends Fragment {
         evento.put("Nota", nota);
         evento.put("Fecha_Creacion", new Date());
 
-        db.collection("Usuario").document(uid).collection("Eventos")
+        db.collection("usuario").document(uid).collection("Eventos")
                 .add(evento)
                 .addOnSuccessListener(doc -> {
                     Toast.makeText(getContext(), "Evento guardado", Toast.LENGTH_SHORT).show();
